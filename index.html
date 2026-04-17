@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Cebada</title>
+
+<style>
+:root {
+  --verde: #2ecc71;
+  --verde-hover: #27ae60;
+  --fondo: #0d0d0d;
+  --card: #1d1d1d;
+  --texto: #ffffff;
+  --texto-suave: #cfcfcf;
+  --borde: rgba(255,255,255,0.08);
+  --sombra: 0 10px 30px rgba(0,0,0,0.35);
+  --rojo: #ff4d4d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background:
+    radial-gradient(circle at top, #1f1f1f 0%, #0d0d0d 55%),
+    linear-gradient(180deg, #0d0d0d, #151515);
+  color: var(--texto);
+}
+
+.container {
+  max-width: 440px;
+  margin: auto;
+  padding: 0 10px 30px;
+}
+
+.header {
+  text-align: center;
+  padding: 24px 10px 12px;
+}
+
+.logo {
+  display: inline-block;
+  cursor: pointer;
+}
+
+.logo img {
+  height: 170px;
+  max-width: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,0.35));
+}
+
+.cart {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  cursor: pointer;
+  z-index: 1002;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(8px);
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: var(--sombra);
+  font-size: 18px;
+}
+
+.badge {
+  background: #ff2d2d;
+  border-radius: 50%;
+  padding: 3px 7px;
+  font-size: 12px;
+  margin-left: 5px;
+  font-weight: bold;
+}
+
+.card {
+  background: linear-gradient(180deg, #1a1a1a, #151515);
+  margin: 10px 0;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid var(--borde);
+  box-shadow: var(--sombra);
+}
+
+.slider {
+  height: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, #2b2b2b 0%, #101010 75%);
+  position: relative;
+  padding: 18px;
+}
+
+.slider::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.06);
+  pointer-events: none;
+}
+
+.slider img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: none;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 12px 22px rgba(0,0,0,0.35));
+}
+
+.slider img.active {
+  display: block;
+}
+
+.info {
+  padding: 22px 20px 24px;
+}
+
+.info h2 {
+  margin: 0 0 12px;
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+#price {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--verde);
+  margin-bottom: 8px;
+}
+
+#stockTexto {
+  color: var(--texto-suave);
+  margin-bottom: 16px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.cantidad-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  margin: 18px 0 10px;
+}
+
+.cantidad-box span {
+  min-width: 28px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.cantidad-box button {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: #2a2a2a;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  margin-top: 0;
+  transition: 0.2s ease;
+}
+
+.cantidad-box button:hover {
+  background: #383838;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  margin-top: 10px;
+  background: var(--verde);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+button:hover {
+  background: var(--verde-hover);
+  transform: translateY(-1px);
+}
+
+.btn-secundario {
+  background: #2a2a2a;
+}
+
+.btn-secundario:hover {
+  background: #3a3a3a;
+}
+
+.btn-rojo {
+  background: #a52a2a;
+}
+
+.btn-rojo:hover {
+  background: #8e2323;
+}
+
+.cart-overlay,
+.overlay,
+.checkout-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: none;
+  z-index: 1000;
+}
+
+.cart-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  max-height: 75vh;
+  overflow-y: auto;
+  background: #111;
+  padding: 18px;
+  display: none;
+  z-index: 1001;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.4);
+}
+
+.admin-panel,
+.checkout-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #111;
+  padding: 20px;
+  border-radius: 18px;
+  width: 90%;
+  max-width: 380px;
+  display: none;
+  max-height: 85vh;
+  overflow: auto;
+  z-index: 1003;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: var(--sombra);
+}
+
+.checkout-panel h3,
+.admin-panel h3 {
+  margin-top: 0;
+}
+
+.checkout-opciones,
+.checkout-formulario {
+  display: none;
+}
+
+.checkout-formulario.active,
+.checkout-opciones.active {
+  display: block;
+}
+
+.item-carrito {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.03);
+  padding: 8px 10px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.item-carrito-izq {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mini-producto {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #fff;
+  padding: 3px;
+  flex-shrink: 0;
+}
+
+.item-carrito-info {
+  font-size: 14px;
+  color: white;
+  line-height: 1.3;
+}
+
+.item-carrito-controles-bloque {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 16px;
+}
+
+.mini-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: #2a2a2a;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+}
+
+.mini-btn:hover {
+  background: #3a3a3a;
+}
+
+.mini-cantidad {
+  min-width: 18px;
+  text-align: center;
+  font-weight: bold;
+  color: white;
+}
+
+#total {
+  margin-top: 10px;
+  font-size: 18px;
+}
+
+input[type="text"],
+input[type="tel"],
+input[type="number"] {
+  width: 100%;
+  padding: 13px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: #101010;
+  color: white;
+  margin-top: 10px;
+  outline: none;
+}
+
+.error {
+  color: var(--rojo);
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.resumen-compra {
+  background: rgba(255,255,255,0.04);
+  border-radius: 12px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+#listaPendientes p,
+#listaPedidos p {
+  background: rgba(255,255,255,0.03);
+  padding: 10px;
+  border-radius: 12px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="logo" onclick="loginAdmin()">
+      <img src="logo.png" alt="Logo La Cebada">
+    </div>
+  </div>
+
+  <div class="cart" onclick="abrirCarrito()">
+    🛒 <span id="count"></span>
+    <span id="badge" class="badge"></span>
+  </div>
+
+  <div class="card">
+    <div class="slider">
+      <img src="yerba1.jpg" class="active" alt="">
+      <img src="yerba2.jpg" alt="">
+      <img src="yerba3.jpg" alt="">
+    </div>
+
+    <div class="info">
+      <h2>La Cebada 🧉 - Yerba Baldo 1kg</h2>
+      <div id="price"></div>
+      <div id="stockTexto"></div>
+
+      <div class="cantidad-box">
+        <button onclick="cambiarCantidad(-1)">−</button>
+        <span id="cantidad">1</span>
+        <button onclick="cambiarCantidad(1)">+</button>
+      </div>
+
+      <button onclick="addCart()">Agregar al carrito</button>
+    </div>
+  </div>
+</div>
+
+<div id="cartOverlay" class="cart-overlay" onclick="cerrarCarrito()"></div>
+
+<div id="cartPanel" class="cart-panel">
+  <h3>Carrito</h3>
+  <div id="items"></div>
+  <div id="total"></div>
+  <button class="btn-secundario" onclick="vaciarCarrito()">Vaciar carrito</button>
+  <button onclick="abrirCheckout()">Finalizar compra</button>
+</div>
+
+<div id="checkoutOverlay" class="checkout-overlay" onclick="cerrarCheckout()"></div>
+
+<div id="checkoutPanel" class="checkout-panel">
+  <div id="checkoutOpciones" class="checkout-opciones active">
+    <h3>Elegí cómo querés confirmar tu pedido</h3>
+    <div class="resumen-compra" id="resumenCheckout"></div>
+    <button onclick="mostrarFormulario('whatsapp')">Confirmar compra directo por WhatsApp</button>
+    <button class="btn-secundario" onclick="mostrarFormulario('contacto')">Nosotros nos comunicamos con vos para confirmar pedido</button>
+    <button class="btn-rojo" onclick="cerrarCheckout()">Cancelar</button>
+  </div>
+
+  <div id="formWhatsapp" class="checkout-formulario">
+    <h3>Confirmar por WhatsApp</h3>
+    <div class="resumen-compra" id="resumenWhatsapp"></div>
+    <label>Completá tu información:</label>
+    <input type="text" id="nombreWhatsapp" placeholder="Tu nombre y apellido">
+    <div id="errorWhatsapp" class="error"></div>
+    <button onclick="confirmarDirectoWhatsapp()">Enviar por WhatsApp</button>
+    <button class="btn-secundario" onclick="volverOpcionesCheckout()">Volver</button>
+  </div>
+
+  <div id="formContacto" class="checkout-formulario">
+    <h3>Nos comunicamos con vos</h3>
+    <div class="resumen-compra" id="resumenContacto"></div>
+    <label>Completá tu información:</label>
+    <input type="text" id="nombreContacto" placeholder="Tu nombre y apellido">
+    <input type="tel" id="telefonoContacto" placeholder="Tu número de teléfono">
+    <div id="errorContacto" class="error"></div>
+    <button onclick="confirmarContacto()">Enviar solicitud</button>
+    <button class="btn-secundario" onclick="volverOpcionesCheckout()">Volver</button>
+  </div>
+</div>
+
+<div id="overlay" class="overlay" onclick="cerrarAdmin()"></div>
+
+<div id="adminPanel" class="admin-panel">
+  <h3>Admin</h3>
+
+  <input type="number" id="stockInput" placeholder="Stock">
+  <button onclick="guardarStock()">Guardar Stock</button>
+
+  <input type="number" id="precioInput" placeholder="Precio">
+  <button onclick="guardarPrecio()">Guardar Precio</button>
+
+  <h3>📊 Estadísticas</h3>
+  <div id="estadisticas"></div>
+
+  <h3>Pedidos pendientes:</h3>
+  <div id="listaPendientes"></div>
+
+  <h3>Pedidos realizados:</h3>
+  <div id="listaPedidos"></div>
+
+  <button onclick="borrarPedidos()">🗑️ Borrar pedidos</button>
+  <button onclick="cerrarAdmin()">Cerrar</button>
+</div>
+
+<div id="mensajeExito" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.75);
+  z-index:2000;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+">
+  <div style="
+    background:#111;
+    color:white;
+    max-width:380px;
+    width:100%;
+    border-radius:18px;
+    padding:24px;
+    text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,0.35);
+    border:1px solid rgba(255,255,255,0.08);
+  ">
+    <h3 style="margin-top:0;">✅ Pedido recibido</h3>
+    <p style="line-height:1.5; color:#d0d0d0;">
+      En breve <strong>La Cebada</strong> se comunicará con vos vía WhatsApp para confirmar el pedido.
+    </p>
+    <button onclick="cerrarMensajeExito()">Entendido</button>
+  </div>
+</div>
+
+<script>
+const TELEFONO_VENDEDOR = "5493364370451";
+const WEBHOOK_URL = "https://hook.us2.make.com/ofufesknpyc3spbueo9q68v4bmasdhgu";
+
+let stock = parseInt(localStorage.getItem("stock")) || 10;
+let precio = parseInt(localStorage.getItem("precio")) || 10500;
+let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+let pendientes = JSON.parse(localStorage.getItem("pendientes")) || [];
+let cantidadSeleccionada = 1;
+let nombreProducto = "La Cebada 🧉 - Yerba Baldo 1kg";
+
+function sonar(){
+  let audio = new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");
+  audio.play();
+}
+
+function mostrarMensajeExito(){
+  document.getElementById("mensajeExito").style.display = "flex";
+}
+
+function cerrarMensajeExito(){
+  document.getElementById("mensajeExito").style.display = "none";
+}
+
+function actualizarBadge(){
+  document.getElementById("badge").innerText = pendientes.length > 0 ? pendientes.length : "";
+}
+
+function loginAdmin(){
+  if(prompt("Contraseña") == "1234"){
+    document.getElementById("adminPanel").style.display = "block";
+    document.getElementById("overlay").style.display = "block";
+    document.getElementById("stockInput").value = stock;
+    document.getElementById("precioInput").value = precio;
+    cargarPedidos();
+    cargarPendientes();
+    actualizarEstadisticas();
+  }
+}
+
+function cerrarAdmin(){
+  document.getElementById("adminPanel").style.display = "none";
+  document.getElementById("overlay").style.display = "none";
+}
+
+function abrirCarrito(){
+  document.getElementById("cartPanel").style.display = "block";
+  document.getElementById("cartOverlay").style.display = "block";
+}
+
+function cerrarCarrito(){
+  document.getElementById("cartPanel").style.display = "none";
+  document.getElementById("cartOverlay").style.display = "none";
+}
+
+function abrirCheckout(){
+  if (carrito.length === 0) {
+    alert("El carrito está vacío");
+    return;
+  }
+
+  actualizarResumenesCheckout();
+  document.getElementById("checkoutPanel").style.display = "block";
+  document.getElementById("checkoutOverlay").style.display = "block";
+  volverOpcionesCheckout();
+}
+
+function cerrarCheckout(){
+  document.getElementById("checkoutPanel").style.display = "none";
+  document.getElementById("checkoutOverlay").style.display = "none";
+  limpiarFormulariosCheckout();
+}
+
+function mostrarFormulario(tipo){
+  document.getElementById("checkoutOpciones").classList.remove("active");
+  document.getElementById("formWhatsapp").classList.remove("active");
+  document.getElementById("formContacto").classList.remove("active");
+
+  if (tipo === "whatsapp") {
+    document.getElementById("formWhatsapp").classList.add("active");
+  } else {
+    document.getElementById("formContacto").classList.add("active");
+  }
+}
+
+function volverOpcionesCheckout(){
+  document.getElementById("checkoutOpciones").classList.add("active");
+  document.getElementById("formWhatsapp").classList.remove("active");
+  document.getElementById("formContacto").classList.remove("active");
+  document.getElementById("errorWhatsapp").innerText = "";
+  document.getElementById("errorContacto").innerText = "";
+}
+
+function limpiarFormulariosCheckout(){
+  document.getElementById("nombreWhatsapp").value = "";
+  document.getElementById("nombreContacto").value = "";
+  document.getElementById("telefonoContacto").value = "";
+  document.getElementById("errorWhatsapp").innerText = "";
+  document.getElementById("errorContacto").innerText = "";
+}
+
+function guardarStock(){
+  stock = parseInt(document.getElementById("stockInput").value);
+  if (isNaN(stock) || stock < 0) stock = 0;
+  localStorage.setItem("stock", stock);
+  actualizarStock();
+}
+
+function guardarPrecio(){
+  precio = parseInt(document.getElementById("precioInput").value);
+  if (isNaN(precio) || precio < 0) precio = 0;
+  localStorage.setItem("precio", precio);
+  actualizarPrecio();
+  actualizarCarrito();
+  actualizarEstadisticas();
+}
+
+function borrarPedidos(){
+  pedidos = [];
+  localStorage.setItem("pedidos", "[]");
+  cargarPedidos();
+  actualizarEstadisticas();
+}
+
+function actualizarStock(){
+  let t = document.getElementById("stockTexto");
+  if (stock <= 0) {
+    t.innerHTML = "Sin stock";
+  } else {
+    t.innerHTML = "Stock disponible";
+  }
+}
+
+function actualizarPrecio(){
+  document.getElementById("price").innerText = "$" + precio;
+}
+
+function cambiarCantidad(v){
+  cantidadSeleccionada += v;
+  if (cantidadSeleccionada < 1) cantidadSeleccionada = 1;
+  if (cantidadSeleccionada > stock) cantidadSeleccionada = stock > 0 ? stock : 1;
+  document.getElementById("cantidad").innerText = cantidadSeleccionada;
+}
+
+function addCart(){
+  if (stock <= 0) return alert("Sin stock");
+
+  let cantidadYaEnCarrito = carrito.reduce((a,b) => a + b.cantidad, 0);
+  if (cantidadYaEnCarrito + cantidadSeleccionada > stock) {
+    return alert("No hay suficiente stock disponible");
+  }
+
+  let item = carrito.find(p => p.nombre === nombreProducto);
+  if (item) {
+    item.cantidad += cantidadSeleccionada;
+  } else {
+    carrito.push({nombre: nombreProducto, cantidad: cantidadSeleccionada});
+  }
+
+  cantidadSeleccionada = 1;
+  document.getElementById("cantidad").innerText = 1;
+
+  guardarCarrito();
+  abrirCarrito();
+}
+
+function guardarCarrito(){
+  localStorage.setItem("carrito", JSON.stringify(carrito));
+  actualizarCarrito();
+}
+
+function vaciarCarrito(){
+  carrito = [];
+  localStorage.setItem("carrito", "[]");
+  actualizarCarrito();
+}
+
+function modificarCantidadCarrito(index, cambio){
+  if (!carrito[index]) return;
+
+  let cantidadTotalSinEste = carrito.reduce((acc, item, i) => {
+    return i === index ? acc : acc + item.cantidad;
+  }, 0);
+
+  let maxPermitidoParaEseItem = stock - cantidadTotalSinEste;
+
+  carrito[index].cantidad += cambio;
+
+  if (carrito[index].cantidad > maxPermitidoParaEseItem) {
+    carrito[index].cantidad = maxPermitidoParaEseItem;
+  }
+
+  if (carrito[index].cantidad <= 0) {
+    carrito.splice(index, 1);
+  }
+
+  guardarCarrito();
+}
+
+function obtenerTotalCantidad(){
+  return carrito.reduce((a,b) => a + b.cantidad, 0);
+}
+
+function obtenerTotalPrecio(){
+  return carrito.reduce((acc, p) => acc + (p.cantidad * precio), 0);
+}
+
+function obtenerDetallePedidoTexto(){
+  return carrito.map(p => `${p.nombre} x${p.cantidad}`).join("\n");
+}
+
+function actualizarResumenesCheckout(){
+  let totalCant = obtenerTotalCantidad();
+  let totalPrecio = obtenerTotalPrecio();
+
+  let resumen = `
+    <strong>Productos:</strong> ${totalCant}<br>
+    <strong>Total:</strong> $${totalPrecio}
+  `;
+
+  document.getElementById("resumenCheckout").innerHTML = resumen;
+  document.getElementById("resumenWhatsapp").innerHTML = resumen;
+  document.getElementById("resumenContacto").innerHTML = resumen;
+}
+
+function actualizarCarrito(){
+  document.getElementById("count").innerText = obtenerTotalCantidad();
+
+  let html = "";
+  let total = 0;
+
+  carrito.forEach((p, index) => {
+    let sub = p.cantidad * precio;
+    total += sub;
+
+    for (let i = 0; i < p.cantidad; i++) {
+      html += `
+        <div class="item-carrito">
+          <div class="item-carrito-izq">
+            <img src="yerba2.jpg" alt="Yerba Baldo" class="mini-producto">
+            <div class="item-carrito-info">
+              <span>${p.nombre}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    html += `
+      <div class="item-carrito-controles-bloque">
+        <button class="mini-btn" onclick="modificarCantidadCarrito(${index}, -1)">−</button>
+        <span class="mini-cantidad">${p.cantidad}</span>
+        <button class="mini-btn" onclick="modificarCantidadCarrito(${index}, 1)">+</button>
+      </div>
+    `;
+  });
+
+  document.getElementById("items").innerHTML = html || "<p>Carrito vacío</p>";
+  document.getElementById("total").innerHTML = "<strong>Total: $" + total + "</strong>";
+  actualizarResumenesCheckout();
+}
+
+function validarTelefono(telefono){
+  const limpio = telefono.replace(/\D/g, "");
+
+  if (limpio.length < 10 || limpio.length > 13) {
+    return false;
+  }
+
+  if (/^0+$/.test(limpio)) {
+    return false;
+  }
+
+  return true;
+}
+
+async function enviarPedidoWebhook(datosPedido){
+  try {
+    await fetch(WEBHOOK_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(datosPedido)
+    });
+  } catch (error) {
+    console.error("Error al enviar pedido al webhook:", error);
+  }
+}
+
+function registrarPedidoPendiente(nombre, telefono = ""){
+  const fecha = new Date().toLocaleString();
+  const totalCant = obtenerTotalCantidad();
+
+  stock -= totalCant;
+  localStorage.setItem("stock", stock);
+
+  pendientes.push({
+    nombre: nombre,
+    telefono: telefono,
+    cantidad: totalCant,
+    fecha: fecha
+  });
+
+  localStorage.setItem("pendientes", JSON.stringify(pendientes));
+  carrito = [];
+  localStorage.setItem("carrito", "[]");
+
+  actualizarStock();
+  actualizarCarrito();
+  cargarPendientes();
+  actualizarBadge();
+  sonar();
+}
+
+function confirmarDirectoWhatsapp(){
+  let nombre = document.getElementById("nombreWhatsapp").value.trim();
+  let error = document.getElementById("errorWhatsapp");
+
+  if (!nombre) {
+    error.innerText = "Completá tu nombre y apellido";
+    return;
+  }
+
+  error.innerText = "";
+
+  let fecha = new Date().toLocaleString();
+  let msg = "Pedido:\n";
+  msg += obtenerDetallePedidoTexto();
+  msg += `\n\nCantidad total: ${obtenerTotalCantidad()}`;
+  msg += `\nTotal: $${obtenerTotalPrecio()}`;
+  msg += `\nCliente: ${nombre}`;
+  msg += `\nFecha: ${fecha}`;
+
+  registrarPedidoPendiente(nombre);
+  cerrarCheckout();
+  cerrarCarrito();
+
+  window.open(`https://wa.me/${TELEFONO_VENDEDOR}?text=${encodeURIComponent(msg)}`, "_blank");
+}
+
+async function confirmarContacto(){
+  let nombre = document.getElementById("nombreContacto").value.trim();
+  let telefono = document.getElementById("telefonoContacto").value.trim();
+  let error = document.getElementById("errorContacto");
+
+  if (!nombre || !telefono) {
+    error.innerText = "Completá tu nombre y número de teléfono";
+    return;
+  }
+
+  if (!validarTelefono(telefono)) {
+    error.innerText = "Este número de teléfono no existe";
+    return;
+  }
+
+  error.innerText = "";
+
+  const fecha = new Date().toLocaleString();
+
+  await enviarPedidoWebhook({
+    tipo_confirmacion: "nos_comunicamos_con_vos",
+    cliente: nombre,
+    telefono: telefono,
+    detalle: obtenerDetallePedidoTexto(),
+    cantidad_total: obtenerTotalCantidad(),
+    total: obtenerTotalPrecio(),
+    fecha: fecha
+  });
+
+  registrarPedidoPendiente(nombre, telefono);
+  cerrarCheckout();
+  cerrarCarrito();
+  limpiarFormulariosCheckout();
+  mostrarMensajeExito();
+}
+
+function cargarPendientes(){
+  let div = document.getElementById("listaPendientes");
+  let html = "";
+
+  pendientes.forEach((p,i) => {
+    html += `
+      <p>
+        👤 ${p.nombre}${p.telefono ? " - " + p.telefono : ""}<br>
+        🧉 ${p.cantidad} u<br>
+        🕒 ${p.fecha}<br>
+        <button onclick="aceptarPedido(${i})">✅ Aceptar</button>
+        <button onclick="denegarPedido(${i})">❌ Denegar</button>
+      </p>`;
+  });
+
+  div.innerHTML = html || "Sin pendientes";
+}
+
+function aceptarPedido(i){
+  let p = pendientes[i];
+  pedidos.push(p);
+  pendientes.splice(i, 1);
+
+  localStorage.setItem("pedidos", JSON.stringify(pedidos));
+  localStorage.setItem("pendientes", JSON.stringify(pendientes));
+
+  cargarPedidos();
+  cargarPendientes();
+  actualizarEstadisticas();
+  actualizarBadge();
+}
+
+function denegarPedido(i){
+  pendientes.splice(i, 1);
+  localStorage.setItem("pendientes", JSON.stringify(pendientes));
+  cargarPendientes();
+  actualizarBadge();
+}
+
+function cargarPedidos(){
+  let div = document.getElementById("listaPedidos");
+  let html = "";
+
+  pedidos.forEach(p => {
+    html += `<p>👤 ${p.nombre}${p.telefono ? " - " + p.telefono : ""}<br>🧉 ${p.cantidad} u<br>🕒 ${p.fecha}</p>`;
+  });
+
+  div.innerHTML = html || "Sin pedidos";
+}
+
+function actualizarEstadisticas(){
+  let totalPedidos = pedidos.length;
+  let totalUnidades = pedidos.reduce((a,b) => a + b.cantidad, 0);
+  let totalDinero = totalUnidades * precio;
+
+  document.getElementById("estadisticas").innerHTML = `
+    📦 Pedidos: ${totalPedidos}<br>
+    🧉 Unidades: ${totalUnidades}<br>
+    💰 Ganancia: $${totalDinero}`;
+}
+
+let i = 0;
+let imgs = document.querySelectorAll(".slider img");
+
+setInterval(() => {
+  imgs[i].classList.remove("active");
+  i = (i + 1) % imgs.length;
+  imgs[i].classList.add("active");
+}, 3000);
+
+actualizarStock();
+actualizarPrecio();
+actualizarCarrito();
+actualizarBadge();
+</script>
+
+</body>
+</html>
